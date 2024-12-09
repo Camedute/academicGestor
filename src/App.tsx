@@ -5,10 +5,10 @@ function App() {
 
   return (
     <>
-      <Link to ="/auth"><button>Regresar</button></Link>
-      <Link to ="/home"><button>Regresar</button></Link>
-      <Link to ="/report"><button>Regresar</button></Link>
-      <Link to ="/student"><button>Regresar</button></Link>
+      <Link to ="/auth"><button>login/register</button></Link>
+      <Link to ="/home"><button>home</button></Link>
+      <Link to ="/report"><button>reportes</button></Link>
+      <Link to ="/student"><button>estudiante</button></Link>
     </>
   )
 }
