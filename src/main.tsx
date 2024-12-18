@@ -7,19 +7,20 @@ import App from './App.tsx';
 // Vistas del gestor
 import Autentication from './views/autentication.tsx';
 import Home from './views/home.tsx';
-import Report from './views/report.tsx';
 import Student from './views/student.tsx';
+import { AuthProvider } from './context/authContext.tsx';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>
+    <AuthProvider>
       <Routes>
         <Route path="/" element={<App />} />
         <Route path="/auth" element={<Autentication />} />
         <Route path="/home" element={<Home />} />
-        <Route path="/report" element={<Report />} />
         <Route path="/student" element={<Student />} />
       </Routes>
+      </AuthProvider>
     </BrowserRouter>
   </StrictMode>
 );
