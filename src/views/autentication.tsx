@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { useAuth } from '../context/authContext';
+
 import Login from '../components/login';
 import SignUp from '../components/signup';
 
@@ -12,29 +11,6 @@ function Autentication() {
         setIsLogin(!isLogin); // Alterna entre true y false
     };
 
-    const {signIn} = useAuth();
-    const {signUp} = useAuth();
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-
-    const trueAuth = async (e: React.FormEvent) => {
-        e.preventDefault
-        if (isLogin === true){
-            try{
-                await signIn(email,password);
-                console.log("logeado con exito");
-            } catch (error){
-                console.log(error);
-            }
-        } else if (isLogin === false){
-            try{
-                await signUp(email,password);
-                console.log("registrado con exito");
-            } catch (error) {
-                console.log(error);
-            }
-        }
-    }
 
     return (
         <>
