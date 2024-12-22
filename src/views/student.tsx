@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { getStudents } from "../services/studentService";
 import { Link } from "react-router-dom";
-
+import Header from "../components/header";
+import { useAuth } from "../context/authContext";
 // Definir el tipo de estudiante
 interface Student {
   id: string;
@@ -11,9 +12,16 @@ interface Student {
 
 const Student = () => {
   const [students, setStudents] = useState<Student[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const {isLoggedIn} = useAuth();
+  const {signOut} = useAuth();
 
+  const handleLogout = async () => {
+    try{
+    await signOut();
+    console.log("Cerrando sesión");} catch(error){console.log(error)}
+  };
   // Fetch de estudiantes
   useEffect(() => {
     const fetchStudents = async () => {
@@ -36,6 +44,9 @@ const Student = () => {
   if (error) return <p className="text-center text-red-500">{error}</p>;
 
   return (
+    <>
+    {isLoggedIn ? (<p>Logeado</p>):(<p>No logeado</p>)}
+    <Header />
     <div className="p-6">
       <h1 className="text-2xl font-bold text-center mb-6">Lista de Estudiantes</h1>
 
@@ -76,8 +87,12 @@ const Student = () => {
             Regresar
           </button>
         </Link>
+        <button onClick={handleLogout}>
+          Cerrar sesión
+        </button>
       </div>
     </div>
+    </>
   );
 };
 

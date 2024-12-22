@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { BookOpen, GraduationCap, Users, BarChart } from "lucide-react";
+import Header from "../components/header";
 
 // Types for our data
 type Course = {
@@ -53,6 +54,8 @@ const Home = () => {
   ]);
 
   return (
+    <>
+    <Header></Header>
     <div className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-8">
@@ -123,6 +126,7 @@ const Home = () => {
         )}
       </div>
     </div>
+    </>
   );
 };
 

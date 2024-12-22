@@ -8,18 +8,25 @@ interface AuthContextType {
   signUp: (email: string, password: string) => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
+  isLoggedIn: boolean;
+  loading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     // Verifica si hay una sesión activa al cargar la aplicación
     const checkSession = async () => {
+      try{
       const { data: { session } } = await supabase.auth.getSession();
-      setUser(session?.user ?? null);
+      setUser(session?.user ?? null);}
+       finally{
+        setLoading(false);
+       }
     };
 
     checkSession();
@@ -43,8 +50,13 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   // Función para iniciar sesión
   const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) throw error;
+    try {
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) throw error;
+    } catch (error) {
+      console.log('Error al iniciar sesión:', error);
+      throw error; // Re-throw para que el componente que lo llama pueda manejarlo
+    }
   };
 
   // Función para cerrar sesión
@@ -52,9 +64,18 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const { error } = await supabase.auth.signOut();
     if (error) throw error;
   };
-
+  const isLoggedIn = !!user;
   return (
-    <AuthContext.Provider value={{ user, signUp, signIn, signOut }}>
+    <AuthContext.Provider 
+    value={{ 
+      user, 
+      signUp, 
+      signIn, 
+      signOut,
+      isLoggedIn,
+      loading 
+      }}
+      >
       {children}
     </AuthContext.Provider>
   );
