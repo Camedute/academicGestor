@@ -44,8 +44,13 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   // Función para registrar un nuevo usuario
   const signUp = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signUp({ email, password });
-    if (error) throw error;
+    try {
+      const { error } = await supabase.auth.signUp({ email, password });
+      if (error) throw error;
+    } catch (error) {
+      console.log('Error al registrar usuario:', error);
+      throw error; // Re-throw para que el componente que lo llama pueda manejarlo
+    }
   };
 
   // Función para iniciar sesión

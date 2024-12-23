@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Form, Input, Button } from "@nextui-org/react";
+import { useAuth } from "../context/authContext";
 
 const SignUp: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -11,6 +12,10 @@ const SignUp: React.FC = () => {
     emailGuardian: "",
   });
 
+  const { signUp } = useAuth();
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -19,9 +24,38 @@ const SignUp: React.FC = () => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Datos del formulario:", formData);
+    setError(null);
+    setIsLoading(true);
+
+    // Validaciones básicas
+    if (!formData.emailStudent.includes('@')) {
+      setError('El correo del estudiante debe ser válido');
+      setIsLoading(false);
+      return;
+    }
+
+    if (formData.passwordStudent.length < 6) {
+      setError('La contraseña debe tener al menos 6 caracteres');
+      setIsLoading(false);
+      return;
+    }
+
+    if (!formData.emailGuardian.includes('@')) {
+      setError('El correo del apoderado debe ser válido');
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      await signUp(formData.emailStudent, formData.passwordStudent);
+      // Aquí podrías agregar lógica para guardar el resto de la información del usuario
+    } catch (error) {
+      setError(error instanceof Error ? error.message : "Error al registrar usuario");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -29,8 +63,15 @@ const SignUp: React.FC = () => {
       className="w-full max-w-lg grid grid-cols-1 md:grid-cols-2 gap-7"
       onSubmit={handleSubmit}
     >
+      {error && (
+        <div className="col-span-full text-red-500 text-sm text-center">
+          {error}
+        </div>
+      )}
+      
       <Input
         isRequired
+        isDisabled={isLoading}
         errorMessage="Este campo es requerido"
         label="Nombre Alumno"
         labelPlacement="outside"
@@ -41,6 +82,7 @@ const SignUp: React.FC = () => {
       />
       <Input
         isRequired
+        isDisabled={isLoading}
         errorMessage="Este campo es requerido"
         label="Apellidos del Alumno"
         labelPlacement="outside"
@@ -51,7 +93,9 @@ const SignUp: React.FC = () => {
       />
       <Input
         isRequired
-        errorMessage="Este campo es requerido"
+        isDisabled={isLoading}
+        type="email"
+        errorMessage="Ingrese un correo válido"
         label="Correo Alumno"
         labelPlacement="outside"
         name="emailStudent"
@@ -61,7 +105,9 @@ const SignUp: React.FC = () => {
       />
       <Input
         isRequired
-        errorMessage="Este campo es requerido"
+        isDisabled={isLoading}
+        type="password"
+        errorMessage="La contraseña debe tener al menos 6 caracteres"
         label="Contraseña Alumno"
         labelPlacement="outside"
         name="passwordStudent"
@@ -71,6 +117,8 @@ const SignUp: React.FC = () => {
       />
       <Input
         isRequired
+        isDisabled={isLoading}
+        type="tel"
         errorMessage="Este campo es requerido"
         label="Teléfono Apoderado"
         labelPlacement="outside"
@@ -81,7 +129,9 @@ const SignUp: React.FC = () => {
       />
       <Input
         isRequired
-        errorMessage="Este campo es requerido"
+        isDisabled={isLoading}
+        type="email"
+        errorMessage="Ingrese un correo válido"
         label="Correo Apoderado"
         labelPlacement="outside"
         name="emailGuardian"
@@ -90,8 +140,15 @@ const SignUp: React.FC = () => {
         onChange={handleChange}
       />
       <div className="col-span-full flex align-center justify-center">
-        <Button type="submit" variant="flat" color="primary" disableRipple>
-          Registrarse
+        <Button 
+          type="submit" 
+          variant="flat" 
+          color="primary" 
+          disableRipple
+          isLoading={isLoading}
+          isDisabled={isLoading}
+        >
+          {isLoading ? 'Registrando...' : 'Registrarse'}
         </Button>
       </div>
     </Form>

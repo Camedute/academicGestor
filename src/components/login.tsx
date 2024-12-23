@@ -1,10 +1,8 @@
 import React, { useState } from "react";
 import { Form, Input, Button } from "@nextui-org/react";
 import { useAuth } from "../context/authContext";
-import { useNavigate } from "react-router-dom";
 const Login: React.FC = () => {
    const { signIn } = useAuth();
-   const navigate = useNavigate();
    const [isLoading, setIsLoading] = useState(false);
    const [formData, setFormData] = useState({
        email: "",
@@ -22,8 +20,7 @@ const Login: React.FC = () => {
        setError(null);
        setIsLoading(true);
         try {
-           await signIn(formData.email, formData.password);
-           navigate("/dashboard"); // O la ruta a la que quieras redirigir después del login
+           await signIn(formData.email, formData.password); // O la ruta a la que quieras redirigir después del login
        } catch (error) {
            setError(error instanceof Error ? error.message : "Error al iniciar sesión");
        } finally {
